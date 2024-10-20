@@ -2,6 +2,7 @@ package com.raj.smart_bank.service.impl;
 
 import com.raj.smart_bank.dto.AccountInfo;
 import com.raj.smart_bank.dto.BankResponse;
+import com.raj.smart_bank.dto.EmailDetails;
 import com.raj.smart_bank.dto.UserRequest;
 import com.raj.smart_bank.entity.User;
 import com.raj.smart_bank.repository.UserRepository;
@@ -18,6 +19,9 @@ import static com.raj.smart_bank.utils.AccountUtils.ACCOUNT_EXIST_MESSAGE;
 public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
+
+    @Autowired
+    EmailService emailService;
 
 
     @Override
@@ -46,6 +50,16 @@ public class UserServiceImpl implements UserService {
                 .status("ACTIVE")
                 .build();
         User savedUser = userRepository.save(newUser);
+
+        EmailDetails emailDetails = EmailDetails.builder()
+                .recipient(savedUser.getEmail())
+                .subject("New Account Created")
+                .emailBody("congratulations! your account has been created. \n" +
+                        "Account Name: " + savedUser.getFirstName() + " " + savedUser.getLastName()+"\n" +
+                        "account Number: " + savedUser.getAccountNumber()
+                )
+                .build();
+        emailService.sendEmailAlert(emailDetails);
         return BankResponse.builder()
                 .responseCode(AccountUtils.ACCOUNT_CREATION_SUCCESS)
                 .responseMessage(AccountUtils.ACCOUNT_CREATION_MESSAGE)
