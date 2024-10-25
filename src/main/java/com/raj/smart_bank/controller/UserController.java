@@ -1,9 +1,6 @@
 package com.raj.smart_bank.controller;
 
-import com.raj.smart_bank.dto.BankResponse;
-import com.raj.smart_bank.dto.CreditDebitRequest;
-import com.raj.smart_bank.dto.EnquiryRequest;
-import com.raj.smart_bank.dto.UserRequest;
+import com.raj.smart_bank.dto.*;
 import com.raj.smart_bank.service.impl.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -29,14 +26,21 @@ public class UserController {
         return userService.nameEnquiry(request);
     }
 
-    @PostMapping("credit")
+    @PostMapping("/credit")
     public BankResponse credit(@RequestBody CreditDebitRequest request){
         return userService.creditAccount(request);
     }
 
-    @PostMapping("debit")
+    @PostMapping("/debit")
     public BankResponse debit(@RequestBody CreditDebitRequest request){
         return userService.debitAccount(request);
     }
+
+    @PostMapping("/transfer")
+    public BankResponse transfer(@RequestBody TransferRequest request){
+        return userService.transfer(request);
+    }
+
+
 
 }

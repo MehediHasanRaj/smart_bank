@@ -18,6 +18,8 @@ public class AccountUtils {
     public static final String INSUFFICIENT_FUNDS_MESSAGE = "Insufficient Funds";
     public static final String ACCOUNT_DEBITED_SUCCESS = "007";
     public static final String ACCOUNT_DEBITED_SUCCESS_MESSAGE = "debit successful!";
+    public static final String TRANSACTION_SUCCESS_CODE = "008";
+    public static final String TRANSACTION_SUCCESS_MESSAGE = "transaction successful!";
 
     public static String generateAccountNumber() {
         //year + random 6 digit

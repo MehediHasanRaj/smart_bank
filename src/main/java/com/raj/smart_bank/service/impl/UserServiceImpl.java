@@ -2,6 +2,7 @@ package com.raj.smart_bank.service.impl;
 
 import com.raj.smart_bank.dto.*;
 import com.raj.smart_bank.entity.User;
+import com.raj.smart_bank.repository.TransactionRepository;
 import com.raj.smart_bank.repository.UserRepository;
 import com.raj.smart_bank.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     EmailService emailService;
-
-    
+    @Autowired
+    private TransactionService transactionService;
 
 
     @Override
@@ -172,5 +173,76 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    //balance enquiry, name enquiry, credit, debit, transfer
+    @Override
+    public BankResponse transfer(TransferRequest request) {
+        //get the account to debit
+        boolean isFromAccountExist = userRepository.existsByAccountNumber(request.getFromAccount());
+        boolean isToAccountExist = userRepository.existsByAccountNumber(request.getToAccount());
+        //checking available balance
+        if(!isFromAccountExist || !isToAccountExist){
+            return BankResponse.builder()
+                    .responseCode(AccountUtils.ACCOUNT_NOT_EXISTS_CODE)
+                    .responseMessage(AccountUtils.ACCOUNT_NOT_EXISTS_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+        //debit account
+        User fromAccount = userRepository.findByAccountNumber(request.getFromAccount());
+        if(fromAccount.getAccountBalance().compareTo(request.getAmount())<0){
+            return BankResponse.builder()
+                    .responseCode(AccountUtils.INSUFFICIENT_FUNDS_CODE)
+                    .responseMessage(AccountUtils.INSUFFICIENT_FUNDS_MESSAGE)
+                    .accountInfo(null)
+                    .build();
+        }
+
+        fromAccount.setAccountBalance(fromAccount.getAccountBalance().subtract(request.getAmount()));
+        userRepository.save(fromAccount);
+        EmailDetails debitAlert = EmailDetails.builder()
+                .subject("Debit alert!!")
+                .recipient(fromAccount.getEmail())
+                .emailBody("Balance deducted from your account!!\nYour deducted amount" + request.getAmount() +"\n now your balance : " + fromAccount.getAccountBalance())
+                .build();
+        emailService.sendEmailAlert(debitAlert);
+        TransactionDto transactionDtoCredit = TransactionDto.builder()
+                .amount(request.getAmount())
+                .transactionType("Debit")
+                .accountNumber(fromAccount.getAccountNumber())
+                .build();
+
+        transactionService.saveTransaction(transactionDtoCredit);
+
+
+
+        // get the account to be credited
+        User toAccount = userRepository.findByAccountNumber(request.getToAccount());
+        toAccount.setAccountBalance(toAccount.getAccountBalance().add(request.getAmount()));
+
+        userRepository.save(toAccount);
+        EmailDetails creditAlert = EmailDetails.builder()
+                .subject("Credit alert!!")
+                .recipient(toAccount.getEmail())
+                .emailBody("Balance added to your account!!\nYour added amount" + request.getAmount() +"\n now your balance : " + fromAccount.getAccountBalance())
+                .build();
+        emailService.sendEmailAlert(creditAlert);
+
+        //saving the transaction
+        TransactionDto transactionDto = TransactionDto.builder()
+                .amount(request.getAmount())
+                .transactionType("Credit")
+                .accountNumber(toAccount.getAccountNumber())
+                .build();
+
+        transactionService.saveTransaction(transactionDto);
+
+
+        //credited account
+        return BankResponse.builder()
+                .responseCode(AccountUtils.TRANSACTION_SUCCESS_CODE)
+                .responseMessage(AccountUtils.TRANSACTION_SUCCESS_MESSAGE)
+                .accountInfo(null)
+                .build();
+    }
+
+
 }

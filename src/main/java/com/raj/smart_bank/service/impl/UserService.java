@@ -1,9 +1,6 @@
 package com.raj.smart_bank.service.impl;
 
-import com.raj.smart_bank.dto.BankResponse;
-import com.raj.smart_bank.dto.CreditDebitRequest;
-import com.raj.smart_bank.dto.EnquiryRequest;
-import com.raj.smart_bank.dto.UserRequest;
+import com.raj.smart_bank.dto.*;
 
 public interface UserService {
     BankResponse createdAccount(UserRequest userRequest);
@@ -11,5 +8,6 @@ public interface UserService {
     String nameEnquiry(EnquiryRequest request);
     BankResponse creditAccount(CreditDebitRequest request);
     BankResponse debitAccount(CreditDebitRequest request);
+    BankResponse transfer(TransferRequest request);
 
 }
