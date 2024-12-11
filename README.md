@@ -4,7 +4,7 @@
 ### 🌟 Key Features
 
 1. **💻 Digital Banking Service**
-   - Convenient, secure, and accessible banking at your fingertips.
+   - Convenient, secure, and accessible banking.
 
 2. **🔒 Highly Secured Authentication**
    - **📩 Login Alert**: Real-time notifications for login activities to keep your account secure.
@@ -73,6 +73,13 @@ The API documentation (Swagger UI) is available at:
 ```html
 http://localhost:8080/swagger-ui.html
 ```
+
+
+### 📧 Contact
+- **Author**: Md Mehedi Hasan Raj
+- **GitHub**: [mehedihasanraj007](https://github.com/mehedihasanraj007)
+- **Email**: [mehedihasanraj007@gmail.com](mailto:mehedihasanraj007@gmail.com)
+
 ### 🛠️ Dependencies
 Dependency for the project
 ```xml
