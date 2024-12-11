@@ -1,12 +1,18 @@
 package com.raj.smart_bank.service.impl;
 
+import com.raj.smart_bank.config.jwt.jwt.JwtUtils;
 import com.raj.smart_bank.dto.*;
+import com.raj.smart_bank.config.jwt.MyUserDetails;
+import com.raj.smart_bank.entity.Role;
 import com.raj.smart_bank.entity.User;
-import com.raj.smart_bank.repository.TransactionRepository;
 import com.raj.smart_bank.repository.UserRepository;
 import com.raj.smart_bank.utils.AccountUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.web.config.EnableSpringDataWebSupport;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,13 +23,21 @@ import static com.raj.smart_bank.utils.AccountUtils.ACCOUNT_EXIST_MESSAGE;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    EmailService emailService;
+    private EmailService emailService;
     @Autowired
     private TransactionService transactionService;
 
+    @Autowired
+    PasswordEncoder encoder;
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @Override
     public BankResponse createdAccount(UserRequest userRequest) {
@@ -45,10 +59,12 @@ public class UserServiceImpl implements UserService {
                 .stateOfOrigin(userRequest.getStateOfOrigin())
                 .accountNumber(AccountUtils.generateAccountNumber())
                 .email(userRequest.getEmail())
+                .password(this.encoder.encode(userRequest.getPassword()))
                 .accountBalance(BigDecimal.ZERO)
                 .phoneNumber(userRequest.getPhoneNumber())
                 .alternativePhoneNumber(userRequest.getAlternativePhoneNumber())
                 .status("ACTIVE")
+                .role(Role.valueOf("ROLE_ADMIN"))
                 .build();
         User savedUser = userRepository.save(newUser);
 
@@ -71,6 +87,35 @@ public class UserServiceImpl implements UserService {
                         .build())
                 .build();
     }
+
+    public BankResponse login(LoginDto loginDto){
+        //authentication manager know how to authenticate the user
+
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(),loginDto.getPassword()));
+        if(!authentication.isAuthenticated()){
+            BankResponse.builder()
+                    .responseCode("404")
+                    .responseMessage("Authentication Error!!")
+                    .build();
+        }
+        //trying to login, send email
+        EmailDetails loginAlert = EmailDetails.builder()
+                .subject("you are logged in")
+                .recipient(loginDto.getEmail())
+                .emailBody("you are into your account. if you are not, contact with bank")
+                .build();
+        emailService.sendEmailAlert(loginAlert);
+        //we will generate token, as authenticated
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        MyUserDetails userDetails = (MyUserDetails) authentication.getPrincipal(); // this method return the UserDetails object
+        String generated_token = jwtUtils.generateTokenFromUsername(userDetails);
+        return BankResponse.builder()
+                .responseCode("Login success")
+                .responseMessage(generated_token)
+                .build();
+    }
+
 
     @Override
     public BankResponse balanceEnquiry(EnquiryRequest request) {
