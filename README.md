@@ -24,6 +24,14 @@ Smart Bank is a digital banking solution built with modern technologies to provi
    - **🗄️ Efficient Database Design**: Optimized database structure for faster data retrieval and improved scalability.
    - **⚡ Caching Implementation (Redis)**: Enhanced performance with in-memory data caching to reduce response times and increase system efficiency.
 
+# 🛠 Technologies Used
+
+- 🔹 **Backend**: Java (Spring Boot) – For robust and scalable API development.
+- 🔹 **Authentication**: JWT (JSON Web Token) – Implementing state-of-the-art authentication and security.
+- 🔹 **Database**: MySQL – Reliable data storage and management.
+- 🔹 **Caching**: Redis – For enhanced performance and faster data retrieval.
+- 🔹 **Third-Party Integration**: APIs for email services.
+- 🔹 **Documentation**: Swagger UI – Easy-to-use API documentation for developers.
 
 ### 🚀 How to Run the Project
 Follow these steps to set up and run the project locally:
