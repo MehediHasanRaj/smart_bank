@@ -81,6 +81,12 @@ http://localhost:8080/swagger-ui.html
 - **GitHub**: [mehedihasanraj007](https://github.com/mehedihasanraj007)
 - **Email**: [mehedihasanraj007@gmail.com](mailto:mehedihasanraj007@gmail.com)
 - **Portfolio Website**: [mehedi-hasan-raj.co.uk](https://mehedi-hasan-raj.co.uk)
+
+## 📄 Documentation
+Basic REST API documentation demo picture
+![Smart Bank Screenshot]( src/main/resources/documentation.png"Dashboard Screenshot")
+
+
 ### 🛠️ Dependencies
 Dependency for the project
 ```xml
