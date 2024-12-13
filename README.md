@@ -1,5 +1,6 @@
 # Smart Bank
- A Digital Banking
+Smart Bank is a digital banking solution built with modern technologies to provide secure, fast, and seamless banking experiences. It leverages cutting-edge authentication mechanisms (JWT), third-party API integrations, and AI-driven support to enhance the user experience. Whether you’re tracking financial activities, generating bank statements, or interacting with customer support, Smart Bank offers a comprehensive and efficient solution for your banking needs.
+
 
 ### 🌟 Key Features
 
