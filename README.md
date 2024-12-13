@@ -84,7 +84,7 @@ http://localhost:8080/swagger-ui.html
 
 ## 📄 Documentation
 Basic REST API documentation demo picture
-![Smart Bank Screenshot]( src/main/resources/documentation.png"Dashboard Screenshot")
+![Smart Bank Screenshot]( src/main/resources/documentation.png)
 
 
 ### 🛠️ Dependencies
